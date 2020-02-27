@@ -11,7 +11,6 @@
 
 @interface ViewController ()
 @property (nonatomic, strong) SSTimer *timer;
-@property (nonatomic, strong) YYTimer *yyTimer;
 @end
 
 @implementation ViewController {
