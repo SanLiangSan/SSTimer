@@ -20,12 +20,12 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    self.timer = [SSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(demo:) userInfo:nil repeats:YES];
+    self.timer = [SSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(demo:) userInfo:@"1" repeats:YES];
     _value = YES;
 }
 
-- (void)demo:(id)object {
-    NSLog(@"~~~~~~~~~");
+- (void)demo:(SSTimer *)object {
+    NSLog(@"~~~~~~~~~%@",object.userInfo);
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
