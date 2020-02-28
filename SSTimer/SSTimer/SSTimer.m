@@ -28,7 +28,14 @@
 
 + (SSTimer *)scheduledTimerWithTimeInterval:(NSTimeInterval)ti target:(id)aTarget selector:(SEL)aSelector userInfo:(nullable id)userInfo repeats:(BOOL)yesOrNo {
     SSTimer *timer = [[SSTimer alloc] initWithTimeInterval:0 interval:ti target:aTarget selector:aSelector userInfo:userInfo repeats:yesOrNo];
-    timer->_running = YES;
+    [timer resume];
+    return timer;
+}
+
+
++ (SSTimer *)scheduledTimerWithTimeInterval:(NSTimeInterval)interval repeats:(BOOL)repeats block:(void (^)(SSTimer *timer))block {
+    NSParameterAssert(block != nil);
+    SSTimer *timer = [[SSTimer alloc] initWithTimeInterval:0 interval:interval target:self selector:@selector(ss_executeBlockFromTimer:) userInfo:[block copy] repeats:repeats];
     [timer resume];
     return timer;
 }
@@ -51,6 +58,7 @@
     return self;
 }
 
+
 - (void)fire {
     if (!_valid) {return;}
     lock(id target = _target;)
@@ -69,13 +77,13 @@
 }
 
 - (void)resume {
-    if (!_running) return;
+    if (_running) return;
     dispatch_resume(_source);
     _running = YES;
 }
 
 - (void)suspend {
-    if (_running) return;
+    if (!_running) return;
     dispatch_suspend(_source);
     _running = NO;
 }
@@ -86,6 +94,7 @@
         dispatch_source_cancel(_source);
         _source = NULL;
         _target = nil;
+        _userInfo = nil;
         _valid = NO;
     }
     dispatch_semaphore_signal(_semaphore);
@@ -109,6 +118,11 @@
 
 - (void)dealloc {
     [self invalidate];
+}
+
++ (void)ss_executeBlockFromTimer:(SSTimer *)aTimer {
+    void (^block)(SSTimer *) = [aTimer userInfo];
+    if (block) block(aTimer);
 }
 
 @end

@@ -20,11 +20,17 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Use 1
-    self.timer = [[SSTimer alloc] initWithTimeInterval:1 interval:1 target:self selector:@selector(demo:) userInfo:nil repeats:YES];
-    _value = NO;
+//    self.timer = [[SSTimer alloc] initWithTimeInterval:1 interval:1 target:self selector:@selector(demo:) userInfo:nil repeats:YES];
+//    _value = NO;
     
     // Use 2
     // self.timer = [SSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(demo:) userInfo:nil repeats:YES];
+    
+    // Use 3
+    self.timer = [SSTimer scheduledTimerWithTimeInterval:1 repeats:YES block:^(SSTimer * _Nonnull timer) {
+        NSLog(@"hahahah");
+    }];
+    _value = YES;
 }
 
 - (void)demo:(SSTimer *)object {

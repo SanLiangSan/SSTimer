@@ -23,6 +23,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// - parameter:  rep   是否重复
 - (instancetype)initWithTimeInterval:(NSTimeInterval)start interval:(NSTimeInterval)ti target:(id)t selector:(SEL)s userInfo:(nullable id)ui repeats:(BOOL)rep;
 
+/// 扩充block
++ (SSTimer *)scheduledTimerWithTimeInterval:(NSTimeInterval)interval repeats:(BOOL)repeats block:(void (^)(SSTimer *timer))block;
+
 /// 启动
 - (void)resume;
 
