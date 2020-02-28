@@ -23,10 +23,13 @@ NS_ASSUME_NONNULL_BEGIN
 /// - parameter:  rep   是否重复
 - (instancetype)initWithTimeInterval:(NSTimeInterval)start interval:(NSTimeInterval)ti target:(id)t selector:(SEL)s userInfo:(nullable id)ui repeats:(BOOL)rep;
 
+/// 启动
 - (void)resume;
 
+/// 暂定
 - (void)suspend;
 
+/// 关闭
 - (void)invalidate;
 
 @property (readonly) BOOL repeats;
