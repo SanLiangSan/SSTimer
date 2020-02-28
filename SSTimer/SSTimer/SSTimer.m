@@ -21,7 +21,6 @@
     SEL _selector;
     dispatch_source_t _source;
     dispatch_semaphore_t _semaphore;
-    dispatch_block_t _block;
     id _userInfo;
     BOOL _running;
 }
