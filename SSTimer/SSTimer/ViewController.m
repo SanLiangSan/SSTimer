@@ -19,9 +19,12 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
-    self.timer = [SSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(demo:) userInfo:@"1" repeats:YES];
-    _value = YES;
+    // Use 1
+    self.timer = [[SSTimer alloc] initWithTimeInterval:1 interval:1 target:self selector:@selector(demo:) userInfo:nil repeats:YES];
+    _value = NO;
+    
+    // Use 2
+    // self.timer = [SSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(demo:) userInfo:nil repeats:YES];
 }
 
 - (void)demo:(SSTimer *)object {

@@ -23,10 +23,12 @@
     dispatch_semaphore_t _semaphore;
     dispatch_block_t _block;
     id _userInfo;
+    BOOL _running;
 }
 
 + (SSTimer *)scheduledTimerWithTimeInterval:(NSTimeInterval)ti target:(id)aTarget selector:(SEL)aSelector userInfo:(nullable id)userInfo repeats:(BOOL)yesOrNo {
     SSTimer *timer = [[SSTimer alloc] initWithTimeInterval:0 interval:ti target:aTarget selector:aSelector userInfo:userInfo repeats:yesOrNo];
+    timer->_running = YES;
     [timer resume];
     return timer;
 }
@@ -67,11 +69,15 @@
 }
 
 - (void)resume {
+    if (!_running) return;
     dispatch_resume(_source);
+    _running = YES;
 }
 
 - (void)suspend {
+    if (_running) return;
     dispatch_suspend(_source);
+    _running = NO;
 }
 
 - (void)invalidate {
@@ -101,5 +107,8 @@
     lock(BOOL va = _valid) return va;
 }
 
+- (void)dealloc {
+    [self invalidate];
+}
 
 @end
