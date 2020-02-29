@@ -19,7 +19,7 @@
     BOOL _repeats;
     __weak id _target;
     SEL _selector;
-    dispatch_source_t _source;
+    dispatch_source_t _timer;
     dispatch_semaphore_t _semaphore;
     id _userInfo;
     BOOL _running;
@@ -50,11 +50,28 @@
         _userInfo = ui;
         _semaphore = dispatch_semaphore_create(1);
         __weak typeof(self) weakSelf = self;
-        _source = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue());
-        dispatch_source_set_timer(_source, dispatch_time(DISPATCH_TIME_NOW, start * NSEC_PER_SEC), ti * NSEC_PER_SEC, 0);
-        dispatch_source_set_event_handler(_source, ^{[weakSelf fire];});
+        _timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, dispatch_get_main_queue());
+        dispatch_source_set_timer(_timer, dispatch_time(DISPATCH_TIME_NOW, start * NSEC_PER_SEC), ti * NSEC_PER_SEC, 0);
+        dispatch_source_set_event_handler(_timer, ^{[weakSelf fire];});
     }
     return self;
+}
+
+// 后续添加queue支持
+dispatch_source_t CreateDispatchTimer(uint64_t interval,
+                                      uint64_t leeway,
+                                      dispatch_queue_t queue,
+                                      dispatch_block_t block)
+{
+    dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER,
+                                                     0, 0, queue);
+    if (timer)
+    {
+        dispatch_source_set_timer(timer, dispatch_walltime(NULL, 0), interval, leeway);
+        dispatch_source_set_event_handler(timer, block);
+        dispatch_resume(timer);
+    }
+    return timer;
 }
 
 
@@ -77,21 +94,21 @@
 
 - (void)resume {
     if (_running) return;
-    dispatch_resume(_source);
+    dispatch_resume(_timer);
     _running = YES;
 }
 
 - (void)suspend {
     if (!_running) return;
-    dispatch_suspend(_source);
+    dispatch_suspend(_timer);
     _running = NO;
 }
 
 - (void)invalidate {
     dispatch_semaphore_wait(_semaphore, DISPATCH_TIME_FOREVER);
     if (_valid) {
-        dispatch_source_cancel(_source);
-        _source = NULL;
+        dispatch_source_cancel(_timer);
+        _timer = NULL;
         _target = nil;
         _userInfo = nil;
         _valid = NO;
